@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Desafío LascaVit - Promo Inmunidad</title>
+    <title>Desafío LascaVit - En Vivo</title>
     <style>
         * {
             box-sizing: border-box;
@@ -27,37 +27,11 @@
                 #3b3865 85.68%, #3b3865 100%);
             padding: 20px;
             overflow-x: hidden;
-        }
-
-        /* Botón de Pantalla Completa Flotante */
-        #fullscreen-btn {
-            position: fixed;
-            top: 20px;
-            right: 20px;
-            background: rgba(255, 255, 255, 0.9);
-            border: none;
-            padding: 12px 18px;
-            border-radius: 30px;
-            cursor: pointer;
-            font-weight: bold;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            z-index: 1000;
-            transition: all 0.3s ease;
-            font-size: 0.9rem;
             color: #3b3865;
         }
 
-        #fullscreen-btn:hover {
-            transform: scale(1.05);
-            background: #fff;
-        }
-
-        /* Contenedor Principal Glassmorphism */
-        .game-container {
-            background: rgba(255, 255, 255, 0.88);
+        .glass-container {
+            background: rgba(255, 255, 255, 0.92);
             backdrop-filter: blur(12px);
             -webkit-backdrop-filter: blur(12px);
             width: 100%;
@@ -65,16 +39,20 @@
             border-radius: 24px;
             padding: 40px;
             box-shadow: 0 12px 40px 0 rgba(0, 0, 0, 0.25);
-            border: 1px solid rgba(255, 255, 255, 0.3);
+            border: 1px solid rgba(255, 255, 255, 0.4);
             text-align: center;
             transition: all 0.5s ease;
             position: relative;
         }
 
+        .host-container {
+            max-width: 1000px; /* Más ancho para la pantalla del presentador */
+        }
+
         h1 {
             color: #3b3865;
-            font-size: 2.4rem;
-            font-weight: 800;
+            font-size: 2.6rem;
+            font-weight: 900;
             margin-bottom: 5px;
             text-transform: uppercase;
             letter-spacing: 1px;
@@ -83,441 +61,486 @@
         .subtitle {
             color: #f58220;
             font-size: 1.2rem;
-            font-weight: 700;
+            font-weight: 800;
             margin-bottom: 30px;
             text-transform: uppercase;
             letter-spacing: 2px;
         }
 
-        .screen {
-            display: none;
-        }
-
-        .screen.active {
-            display: block;
-            animation: fadeIn 0.4s ease-in-out;
-        }
+        .screen { display: none; }
+        .screen.active { display: block; animation: fadeIn 0.4s ease-in-out; }
 
         @keyframes fadeIn {
             from { opacity: 0; transform: translateY(10px); }
             to { opacity: 1; transform: translateY(0); }
         }
 
-        /* Estilos de Botones */
         .btn {
             display: block;
             width: 100%;
-            padding: 16px 24px;
+            padding: 18px 24px;
             margin: 14px 0;
             border: none;
-            border-radius: 14px;
-            font-size: 1.1rem;
-            font-weight: 600;
+            border-radius: 16px;
+            font-size: 1.2rem;
+            font-weight: 700;
             cursor: pointer;
             transition: all 0.2s ease;
             text-align: center;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
         }
 
-        .btn-menu {
-            background: #3b3865;
-            color: white;
-            box-shadow: 0 4px 15px rgba(59, 56, 101, 0.3);
-        }
+        .btn-host { background: #3b3865; color: white; }
+        .btn-host:hover { background: #2a2749; transform: translateY(-2px); }
 
-        .btn-menu:hover:not(:disabled) {
-            background: #2a2749;
-            transform: translateY(-2px);
-        }
+        .btn-player { background: #8bc53f; color: white; }
+        .btn-player:hover { background: #7ab036; transform: translateY(-2px); }
 
-        .btn-menu:disabled {
-            background: #a09eb3;
-            cursor: not-allowed;
-            opacity: 0.6;
-            box-shadow: none;
-        }
-
-        /* Opciones de respuesta */
         .option-btn {
             background: white;
             color: #3b3865;
-            border: 2px solid #e2e8f0;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+            border: 2px solid #cbd5e1;
         }
-
         .option-btn:hover:not(:disabled) {
             border-color: #3b3865;
             background: #f8fafc;
         }
+        .option-btn.correct { background: #8bc53f !important; color: white !important; border-color: #8bc53f !important; }
+        .option-btn.incorrect { background: #e34440 !important; color: white !important; border-color: #e34440 !important; }
 
-        .option-btn.correct {
-            background: #8bc53f !important;
-            color: white !important;
-            border-color: #8bc53f !important;
-        }
-
-        .option-btn.incorrect {
-            background: #e34440 !important;
-            color: white !important;
-            border-color: #e34440 !important;
-        }
-
-        /* Inputs */
-        .input-group {
-            margin: 25px 0;
-        }
-
+        .input-group { margin: 25px 0; }
         input[type="text"] {
-            width: 100%;
-            padding: 16px;
-            border: 2px solid #cbd5e1;
-            border-radius: 12px;
-            font-size: 1.1rem;
-            text-align: center;
-            outline: none;
-            transition: border-color 0.2s;
+            width: 100%; padding: 18px; border: 2px solid #cbd5e1; border-radius: 14px;
+            font-size: 1.2rem; text-align: center; outline: none; font-weight: 600;
         }
+        input[type="text"]:focus { border-color: #f58220; }
 
-        input[type="text"]:focus {
-            border-color: #3b3865;
-        }
-
-        /* Cabecera del Juego */
         .game-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 25px;
-            padding-bottom: 15px;
-            border-bottom: 2px solid #e2e8f0;
-            font-size: 0.95rem;
-            color: #475569;
-            font-weight: 600;
+            display: flex; justify-content: space-between; align-items: center;
+            margin-bottom: 25px; padding-bottom: 15px; border-bottom: 2px solid #e2e8f0;
+            font-size: 1rem; color: #475569; font-weight: 700;
         }
 
-        .player-tag {
-            color: #3b3865;
-            font-weight: 700;
-        }
-
-        /* Cronómetro */
         .timer-box {
-            background: #3b3865;
-            color: white;
-            padding: 8px 16px;
-            border-radius: 20px;
-            font-weight: bold;
-            font-size: 1.1rem;
-            min-width: 60px;
-            transition: background 0.3s;
+            background: #3b3865; color: white; padding: 10px 20px;
+            border-radius: 25px; font-weight: 900; font-size: 1.4rem; min-width: 70px;
         }
-
-        .timer-box.warning {
-            background: #e34440;
-            animation: pulse 0.5s infinite alternate;
-        }
+        .timer-box.warning { background: #e34440; animation: pulse 0.3s infinite alternate; }
 
         @keyframes pulse {
             from { transform: scale(1); }
-            to { transform: scale(1.05); }
+            to { transform: scale(1.1); }
         }
 
-        .question-text {
-            font-size: 1.4rem;
-            color: #2d3748;
-            font-weight: 700;
-            margin-bottom: 30px;
-            line-height: 1.4;
+        .question-text { font-size: 1.5rem; font-weight: 800; margin-bottom: 30px; line-height: 1.4; }
+        
+        .leaderboard {
+            text-align: left; background: rgba(255,255,255,0.7);
+            border-radius: 16px; padding: 20px; max-height: 400px; overflow-y: auto;
+            margin-top: 20px; border: 1px solid #cbd5e1;
         }
+        .lb-item {
+            display: flex; justify-content: space-between; align-items: center;
+            padding: 12px 15px; border-bottom: 1px solid #e2e8f0; font-size: 1.1rem; font-weight: 700;
+        }
+        .lb-item:last-child { border: none; }
+        .lb-rank { width: 40px; color: #f58220; font-weight: 900; }
+        .lb-name { flex: 1; }
+        .lb-stats { text-align: right; color: #475569; font-size: 0.9rem; }
+        .lb-score { color: #8bc53f; font-size: 1.3rem; font-weight: 900; margin-left: 15px;}
+        
+        .top-3 { background: white; box-shadow: 0 4px 10px rgba(0,0,0,0.05); border-radius: 12px; margin-bottom: 8px; border:none;}
+        .top-1 .lb-rank { color: #d4af37; font-size: 1.5rem; } /* Oro */
+        .top-2 .lb-rank { color: #c0c0c0; font-size: 1.3rem; } /* Plata */
+        .top-3 .lb-rank { color: #cd7f32; font-size: 1.2rem; } /* Bronce */
 
-        .score-display {
-            font-size: 3rem;
-            font-weight: 800;
-            color: #8bc53f;
-            margin: 20px 0;
+        /* Loading Spinner */
+        .loader {
+            border: 5px solid #f3f3f3; border-top: 5px solid #3b3865; border-radius: 50%;
+            width: 40px; height: 40px; animation: spin 1s linear infinite; margin: 20px auto;
         }
-
-        .podium-list {
-            text-align: left;
-            margin: 20px 0;
-            background: rgba(255,255,255,0.5);
-            padding: 15px;
-            border-radius: 12px;
-        }
-
-        .podium-item {
-            display: flex;
-            justify-content: space-between;
-            padding: 8px 0;
-            border-bottom: 1px solid #cbd5e1;
-            font-weight: 600;
-        }
-        .podium-item:last-child { border: none; }
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
     </style>
 </head>
 <body>
 
-    <button id="fullscreen-btn" onclick="toggleFullscreen()">
-        📺 Pantalla Completa
-    </button>
-
-    <div class="game-container">
+    <div id="main-container" class="glass-container">
         <h1>LascaVit</h1>
         <div class="subtitle">Vitalidad que se siente</div>
 
-        <!-- PANTALLA 1: MENU PRINCIPAL -->
-        <div id="screen-menu" class="screen active">
-            <p style="margin-bottom: 20px; color: #475569; font-weight: 500;">Selecciona un participante para iniciar su ronda de 10 preguntas cronometradas.</p>
-            <button id="btn-p1" class="btn btn-menu" onclick="goToRegister(1)">Participante 1</button>
-            <button id="btn-p2" class="btn btn-menu" onclick="goToRegister(2)">Participante 2</button>
-            <button id="btn-p3" class="btn btn-menu" onclick="goToRegister(3)">Participante 3</button>
-            
-            <div id="podium-section" style="display:none; margin-top: 30px;">
-                <h3 style="color:#3b3865; margin-bottom:10px;">Tabla de Posiciones</h3>
-                <div id="podium-list" class="podium-list"></div>
-            </div>
+        <div id="screen-role" class="screen active">
+            <h2 style="margin-bottom: 20px;">¿Cómo vas a ingresar?</h2>
+            <button class="btn btn-player" onclick="selectRole('player')">📱 Soy Jugador (Celular)</button>
+            <br>
+            <button class="btn btn-host" onclick="selectRole('host')" style="background: transparent; color:#475569; border: 2px solid #cbd5e1; box-shadow:none;">📺 Pantalla Principal (Transmisor)</button>
         </div>
 
-        <!-- PANTALLA 2: REGISTRO DE NOMBRE -->
-        <div id="screen-register" class="screen">
-            <h3 id="register-title" style="color: #3b3865; font-size: 1.4rem;">Registro Participante</h3>
+        <!-- ================= VISTAS DEL JUGADOR ================= -->
+        <div id="screen-player-register" class="screen">
+            <h3>Registro de Participante</h3>
+            <p style="color: #475569; margin-top:10px;">Ingresa tu nombre para unirte a la dinámica masiva.</p>
             <div class="input-group">
-                <input type="text" id="player-name" placeholder="Escribe tu nombre aquí..." autocomplete="off">
+                <input type="text" id="player-name" placeholder="Ej: Juan Pérez" autocomplete="off" maxlength="20">
             </div>
-            <button class="btn btn-menu" onclick="startGame()">Iniciar Cronómetro 🚀</button>
-            <button class="btn" style="background:#cbd5e1; color:#475569;" onclick="showScreen('screen-menu')">Volver</button>
+            <button class="btn btn-player" onclick="joinGame()">Unirme al Juego 🚀</button>
         </div>
 
-        <!-- PANTALLA 3: JUEGO ACTIVO -->
-        <div id="screen-game" class="screen">
+        <div id="screen-player-waiting" class="screen">
+            <h3>¡Ya estás dentro, <span id="wait-name" style="color:#f58220;"></span>!</h3>
+            <div class="loader"></div>
+            <p style="color: #475569; font-weight:600;">Mira la pantalla principal.<br>El juego comenzará en breve...</p>
+        </div>
+
+        <div id="screen-player-quiz" class="screen">
             <div class="game-header">
-                <div>Jugador: <span id="display-player-name" class="player-tag">-</span></div>
-                <div>Pregunta: <span id="display-progress">-</span></div>
-                <div>Puntos: <span id="display-score" style="color:#8bc53f; font-weight:bold;">0</span></div>
-                <div id="timer" class="timer-box">15s</div>
+                <div>Progreso: <span id="display-progress">-</span></div>
+                <div id="timer" class="timer-box">5s</div>
             </div>
             <div id="question-text" class="question-text">Cargando pregunta...</div>
             <div id="options-container"></div>
         </div>
 
-        <!-- PANTALLA 4: FIN DE RONDA -->
-        <div id="screen-result" class="screen">
-            <h2 style="color: #3b3865;">¡Ronda Completada!</h2>
-            <p style="margin-top:10px; color:#475569; font-weight:500;">Puntaje final de <span id="result-player-name" class="player-tag">-</span>:</p>
-            <div id="result-score" class="score-display">0</div>
-            <button class="btn btn-menu" onclick="showScreen('screen-menu')">Volver al Menú Principal</button>
+        <div id="screen-player-done" class="screen">
+            <h2 style="color: #8bc53f; font-size: 2.5rem;">¡Terminaste!</h2>
+            <p style="margin: 20px 0; font-size: 1.2rem; font-weight:700;">Tu puntaje: <span id="my-final-score" style="color:#3b3865; font-size:1.8rem;">0</span></p>
+            <p style="color: #475569;">Atento a la pantalla principal para descubrir quién fue el más rápido y conocer al ganador.</p>
+        </div>
+
+        <!-- ================= VISTAS DEL TRANSMISOR (HOST) ================= -->
+        <div id="screen-host-lobby" class="screen">
+            <h2 style="font-size: 2rem;">Sala de Espera</h2>
+            <p style="font-size: 1.2rem; margin: 10px 0;">Escaneen el QR y únanse al juego.</p>
+            <div style="font-size: 4rem; font-weight: 900; color:#8bc53f; margin: 20px 0;">
+                <span id="lobby-count">0</span>
+            </div>
+            <p style="font-weight: 700; color:#475569; text-transform:uppercase;">Jugadores Conectados</p>
+            <button class="btn btn-host" style="margin-top: 30px;" onclick="hostStartGame()">¡Comenzar el Desafío!</button>
+            <button class="btn" style="background:#e34440; color:white; margin-top:10px;" onclick="resetLobby()">Limpiar Sala (Reinicio Total)</button>
+        </div>
+
+        <div id="screen-host-playing" class="screen">
+            <h2 style="font-size: 2.5rem; color:#f58220; margin-bottom: 20px;">¡Juego en Curso!</h2>
+            <div class="loader" style="width: 80px; height: 80px; border-width: 8px;"></div>
+            <p style="font-size: 1.5rem; color:#3b3865; font-weight: 700; margin-top:20px;">Los participantes están respondiendo...</p>
+            <div style="margin-top: 30px; font-size: 1.2rem; color:#475569;">
+                Jugadores que ya terminaron: <span id="finished-count" style="font-weight:900; color:#8bc53f;">0</span>
+            </div>
+            <button class="btn btn-host" style="margin-top: 40px;" onclick="hostEndGame()">Forzar Fin y Mostrar Resultados 🏆</button>
+        </div>
+
+        <div id="screen-host-results" class="screen">
+            <h2 style="font-size: 2.5rem;">Resultados Finales</h2>
+            <p style="color:#475569; font-weight:600;">Clasificación por Puntaje y Velocidad (Milisegundos)</p>
+            <div id="leaderboard" class="leaderboard">
+                <!-- Se llena con JS -->
+            </div>
+            <button class="btn btn-host" style="margin-top:20px;" onclick="resetLobby()">Nueva Ronda</button>
         </div>
     </div>
 
-    <script>
-        // Banco de 30 preguntas divididas en 3 bloques exactos
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
+        import { getAuth, signInAnonymously, signInWithCustomToken } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+        import { getFirestore, doc, setDoc, updateDoc, deleteDoc, onSnapshot, collection, getDocs } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+
+        // Configuración de entorno
+        const appId = typeof __app_id !== 'undefined' ? __app_id : 'lascavit-live';
+        const firebaseConfig = typeof __firebase_config !== 'undefined' ? JSON.parse(__firebase_config) : {
+            apiKey: "demo-key", projectId: "demo-project"
+        };
+        const initialAuthToken = typeof __initial_auth_token !== 'undefined' ? __initial_auth_token : null;
+
+        let app, db, auth;
+        try {
+            app = initializeApp(firebaseConfig);
+            db = getFirestore(app);
+            auth = getAuth(app);
+        } catch (e) {
+            console.error("Firebase Init Error:", e);
+        }
+
+        // Base de Datos de Preguntas (30 preguntas divididas en 3 pools aleatorios)
         const questionsPool = {
             1: [
-                { q: "¿El Zinc + Vitamina C + Vitamina E refuerza el sistema inmune?", type: "VF", options: ["Verdadero", "Falso"], correct: 0 },
-                { q: "¿El Calcio 500 actúa como coadyuvante en el tratamiento de la osteoporosis?", type: "VF", options: ["Verdadero", "Falso"], correct: 0 },
-                { q: "¿El Magnesio tiene sabor Naranja y Pomelo?", type: "VF", options: ["Verdadero", "Falso"], correct: 1 },
-                { q: "¿Qué sabor tiene la Vitamina C de 1000 mg?", type: "MC", options: ["Naranja", "Limón", "Pomelo"], correct: 0 },
-                { q: "¿Cuál producto previene el daño oxidativo causado por radicales libres?", type: "MC", options: ["Magnesio", "Vitamina C 1000", "Zinc+Vit C+Vit E"], correct: 2 },
-                { q: "¿Cuántos miligramos indica la presentación de Vitamina C sola?", type: "MC", options: ["500 Mg", "1000 Mg", "2000 Mg"], correct: 1 },
-                { q: "Completa: El Calcio + Vitamina D3 es una combinación que favorece la _______ de Calcio.", type: "MC", options: ["Absorción", "Elimination", "Producción"], correct: 0 },
-                { q: "¿Qué producto contiene 10 vitaminas esenciales?", type: "MC", options: ["Multivitaminas+Minerales", "Calcio+Vitamina C", "Magnesio"], correct: 0 },
-                { q: "Según la gráfica grupal, la familia LascaVit pertenece a la línea...", type: "MC", options: ["Ética", "OTC", "Hospitalaria"], correct: 1 },
-                { q: "¿Todos los tubos indican traer 30 comprimidos efervescentes?", type: "VF", options: ["Verdadero", "Falso"], correct: 1 }
+                { q: "¿El Zinc + Vitamina C + Vitamina E refuerza el sistema inmune?", options: ["Verdadero", "Falso"], correct: 0 },
+                { q: "¿El Calcio 500 actúa como coadyuvante en el tratamiento de la osteoporosis?", options: ["Verdadero", "Falso"], correct: 0 },
+                { q: "¿El Magnesio tiene sabor Naranja y Pomelo?", options: ["Verdadero", "Falso"], correct: 1 },
+                { q: "¿Qué sabor tiene la Vitamina C de 1000 mg?", options: ["Naranja", "Limón", "Pomelo"], correct: 0 },
+                { q: "¿Cuál producto previene el daño oxidativo causado por radicales libres?", options: ["Magnesio", "Vitamina C 1000", "Zinc+Vit C+Vit E"], correct: 2 },
+                { q: "¿Cuántos miligramos indica la presentación de Vitamina C sola?", options: ["500 Mg", "1000 Mg", "2000 Mg"], correct: 1 },
+                { q: "Completa: El Calcio + Vitamina D3 favorece la _______ de Calcio.", options: ["Absorción", "Eliminación", "Producción"], correct: 0 },
+                { q: "¿Qué producto contiene 10 vitaminas esenciales?", options: ["Multivitaminas+Minerales", "Calcio+Vitamina C", "Magnesio"], correct: 0 },
+                { q: "¿Cuántos años de trayectoria y legado tiene Vicente Scavone según las gráficas?", options: ["Más de 90 años", "Más de 50 años", "100 años"], correct: 0 }, // Pregunta modificada
+                { q: "¿Todos los tubos indican traer 30 comprimidos efervescentes?", options: ["Verdadero", "Falso"], correct: 1 }
             ],
             2: [
-                { q: "¿Toda la línea LascaVit indica ser 'Sin lactosa'?", type: "VF", options: ["Verdadero", "Falso"], correct: 0 },
-                { q: "¿El Calcio + Vitamina C tiene sabor a Naranja?", type: "VF", options: ["Verdadero", "Falso"], correct: 0 },
-                { q: "¿El producto Multivitaminas + Minerales sirve para cubrir deficiencias nutricionales?", type: "VF", options: ["Verdadero", "Falso"], correct: 0 },
-                { q: "¿Cuál de estos beneficios corresponde al Magnesio?", type: "MC", options: ["Salud cardiovascular", "Producción de colágeno", "Absorción de hierro"], correct: 0 },
-                { q: "¿Qué combinación tiene sabor a Naranja y Limón?", type: "MC", options: ["Calcio+Vitamina D3", "Calcio 500", "Magnesio"], correct: 1 },
-                { q: "¿Qué vitamina de la línea de las gráficas estimula la producción de colágeno en piel y huesos?", type: "MC", options: ["Vitamina C 1000 Mg", "Vitamina E", "Vitamina D3"], correct: 0 },
-                { q: "Completa: El producto Zinc + Vitamina C + Vitamina E combate el envejecimiento _______.", type: "MC", options: ["Precoz", "Celular", "Natural"], correct: 0 },
-                { q: "¿Qué minerales acompañan a las 10 vitaminas en el LascaVit verde?", type: "MC", options: ["Calcio+Magnesio+Potasio", "Zinc+Hierro", "Calcio+Zinc"], correct: 0 },
-                { q: "¿Para qué tipo de pacientes es apta la línea según sus iconos morados?", type: "MC", options: ["Solo Celíacos", "Celíacos y Diabéticos", "Solo Diabéticos"], correct: 1 },
-                { q: "¿El LascaVit Calcio + C crea una sinergia que favorece la absorción de qué?", type: "MC", options: ["Calcio", "Vitamina C", "Hierro"], correct: 0 }
+                { q: "¿Toda la línea LascaVit indica ser 'Sin lactosa'?", options: ["Verdadero", "Falso"], correct: 0 },
+                { q: "¿El Calcio + Vitamina C tiene sabor a Naranja?", options: ["Verdadero", "Falso"], correct: 0 },
+                { q: "¿El producto Multivitaminas + Minerales sirve para cubrir deficiencias nutricionales?", options: ["Verdadero", "Falso"], correct: 0 },
+                { q: "¿Cuál de estos beneficios corresponde al Magnesio?", options: ["Salud cardiovascular", "Producción de colágeno", "Absorción de hierro"], correct: 0 },
+                { q: "¿Qué combinación tiene sabor a Naranja y Limón?", options: ["Calcio+Vitamina D3", "Calcio 500", "Magnesio"], correct: 1 },
+                { q: "¿Qué vitamina estimula la producción de colágeno en piel y huesos?", options: ["Vitamina C 1000 Mg", "Vitamina E", "Vitamina D3"], correct: 0 },
+                { q: "Completa: El producto Zinc + Vitamina C + Vitamina E combate el envejecimiento _______.", options: ["Precoz", "Celular", "Natural"], correct: 0 },
+                { q: "¿Qué minerales acompañan a las 10 vitaminas en el LascaVit verde?", options: ["Calcio+Magnesio+Potasio", "Zinc+Hierro", "Calcio+Zinc"], correct: 0 },
+                { q: "¿Para qué tipo de pacientes es apta la línea según sus iconos morados?", options: ["Solo Celíacos", "Celíacos y Diabéticos", "Solo Diabéticos"], correct: 1 },
+                { q: "¿El LascaVit Calcio + C crea una sinergia que favorece la absorción de qué?", options: ["Calcio", "Vitamina C", "Hierro"], correct: 0 }
             ],
             3: [
-                { q: "¿El Magnesio ayuda al mejoramiento del sueño?", type: "VF", options: ["Verdadero", "Falso"], correct: 0 },
-                { q: "¿La línea LascaVit es un legado de Vicente Scavone desde 1935?", type: "VF", options: ["Verdadero", "Falso"], correct: 0 },
-                { q: "¿El sabor de Calcio + Vitamina D3 es Naranja y Pomelo?", type: "VF", options: ["Verdadero", "Falso"], correct: 0 },
-                { q: "¿Cuál producto es un potente antioxidante y mejora la absorción de hierro?", type: "MC", options: ["Vitamina C 1000 Mg", "Magnesio", "Calcio 500"], correct: 0 },
-                { q: "¿Qué beneficio NO pertenece al Magnesio en las gráficas?", type: "MC", options: ["Salud ósea", "Combate el envejecimiento precoz", "Recuperación post actividad"], correct: 1 },
-                { q: "¿Qué sabor tiene el Multivitaminas + Minerales?", type: "MC", options: ["Naranja y Limón", "Naranja y Pomelo", "Durazno y Mburucuyá"], correct: 1 },
-                { q: "Completa: El Calcio 500 se usa para la prevención y tratamiento de _______ de calcio.", type: "MC", options: ["Exceso", "Déficit", "Desgaste"], correct: 1 },
-                { q: "¿Cuál es el sabor del producto que contiene Zinc?", type: "MC", options: ["Naranja", "Pomelo", "Durazno y Mburucuyá"], correct: 2 },
-                { q: "What product menciona el mantenimiento de la salud muscular y nerviosa?", type: "MC", options: ["Magnesio", "Calcio+D3", "Vitamina C"], correct: 0 },
-                { q: "¿Qué palabra completa el eslogan 'Vitalidad que se ____'?", type: "MC", options: ["Siente", "Nota", "Ve"], correct: 0 }
+                { q: "¿El Magnesio ayuda al mejoramiento del sueño?", options: ["Verdadero", "Falso"], correct: 0 },
+                { q: "¿La línea LascaVit es un legado de Vicente Scavone desde 1935?", options: ["Verdadero", "Falso"], correct: 0 },
+                { q: "¿El sabor de Calcio + Vitamina D3 es Naranja y Pomelo?", options: ["Verdadero", "Falso"], correct: 0 },
+                { q: "¿Cuál producto es un potente antioxidante y mejora la absorción de hierro?", options: ["Vitamina C 1000 Mg", "Magnesio", "Calcio 500"], correct: 0 },
+                { q: "¿Qué beneficio NO pertenece al Magnesio en las gráficas?", options: ["Salud ósea", "Combate el envejecimiento precoz", "Recuperación post"], correct: 1 },
+                { q: "¿Qué sabor tiene el Multivitaminas + Minerales?", options: ["Naranja y Limón", "Naranja y Pomelo", "Durazno y Mburucuyá"], correct: 1 },
+                { q: "Completa: El Calcio 500 se usa para la prevención y tratamiento de _______ de calcio.", options: ["Exceso", "Déficit", "Desgaste"], correct: 1 },
+                { q: "¿Cuál es el sabor del producto que contiene Zinc?", options: ["Naranja", "Pomelo", "Durazno y Mburucuyá"], correct: 2 },
+                { q: "¿Qué producto menciona el mantenimiento de la salud muscular y nerviosa?", options: ["Magnesio", "Calcio+D3", "Vitamina C"], correct: 0 },
+                { q: "¿Qué palabra completa el eslogan 'Vitalidad que se ____'?", options: ["Siente", "Nota", "Ve"], correct: 0 }
             ]
         };
 
-        let currentPool = 1;
-        let currentQuestionIdx = 0;
+        // Estado del Jugador local
+        let userId = null;
+        let userName = "";
+        let playerPool = 1;
+        let currentQIdx = 0;
         let score = 0;
+        let totalTimeMs = 0; // Para el desempate
+        let qStartTime = 0;
         let timerInterval = null;
-        let timeLeft = 15;
-        let leaderboard = [];
+        let timeLeft = 5;
+        let isHost = false;
 
-        function toggleFullscreen() {
-            if (!document.fullscreenElement) {
-                document.documentElement.requestFullscreen().catch(err => {
-                    alert(`Error intentando activar pantalla completa: ${err.message}`);
-                });
-                document.getElementById('fullscreen-btn').innerText = "❌ Salir Completa";
+        // Referencias Firebase Estrictas (Regla 1)
+        const playersCollRef = collection(db, 'artifacts', appId, 'public', 'data', 'players');
+        const stateDocRef = doc(db, 'artifacts', appId, 'public', 'data', 'state', 'global');
+
+        // Navegación Básica
+        window.showScreen = (id) => {
+            document.querySelectorAll('.screen').forEach(el => el.classList.remove('active'));
+            document.getElementById(id).classList.add('active');
+        };
+
+        window.selectRole = async (role) => {
+            isHost = (role === 'host');
+            if(isHost) {
+                document.getElementById('main-container').classList.add('host-container');
+                showScreen('screen-host-lobby');
             } else {
-                document.exitFullscreen();
-                document.getElementById('fullscreen-btn').innerText = "📺 Pantalla Completa";
-            }
-        }
-
-        function showScreen(screenId) {
-            document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
-            document.getElementById(screenId).classList.add('active');
-            if(screenId === 'screen-menu') {
-                updateMenuState();
-            }
-        }
-
-        function goToRegister(poolNum) {
-            currentPool = poolNum;
-            document.getElementById('player-name').value = "";
-            document.getElementById('register-title').innerText = `Registro - Participante ${poolNum}`;
-            showScreen('screen-register');
-        }
-
-        function startGame() {
-            const nameInput = document.getElementById('player-name').value.trim();
-            if (!nameInput) {
-                alert("Por favor, ingresa el nombre del participante.");
-                return;
+                showScreen('screen-player-register');
             }
 
-            // Inicializar datos de juego
-            currentQuestionIdx = 0;
+            try {
+                if (initialAuthToken) {
+                    await signInWithCustomToken(auth, initialAuthToken);
+                } else {
+                    await signInAnonymously(auth);
+                }
+                userId = auth.currentUser.uid;
+                
+                if(isHost) {
+                    initHostListeners();
+                } else {
+                    initPlayerListeners();
+                }
+            } catch (err) {
+                console.error("Auth error:", err);
+            }
+        };
+
+        // ==========================================
+        // LÓGICA DEL JUGADOR (MÓVIL)
+        // ==========================================
+        
+        window.joinGame = async () => {
+            if (!userId) return;
+            const name = document.getElementById('player-name').value.trim();
+            if(!name) return;
+            userName = name;
+            
+            // Asignar bloque aleatorio 1, 2 o 3
+            playerPool = Math.floor(Math.random() * 3) + 1;
+            
+            document.getElementById('wait-name').innerText = userName;
+            showScreen('screen-player-waiting');
+
+            const myDocRef = doc(db, 'artifacts', appId, 'public', 'data', 'players', userId);
+            await setDoc(myDocRef, {
+                id: userId,
+                name: userName,
+                score: 0,
+                time: 0,
+                finished: false
+            });
+        };
+
+        const initPlayerListeners = () => {
+            if(!userId) return;
+            // Escuchar el estado global manejado por el Host
+            onSnapshot(stateDocRef, (snap) => {
+                if(!snap.exists()) return;
+                const data = snap.data();
+                
+                // Si el host arranca y yo estoy esperando
+                if(data.status === 'playing' && document.getElementById('screen-player-waiting').classList.contains('active')) {
+                    startQuizFlow();
+                }
+            }, (error) => console.error("Error listening state:", error));
+        };
+
+        const startQuizFlow = () => {
+            currentQIdx = 0;
             score = 0;
-            
-            // Guardar info temporal del jugador activo
-            window.activePlayer = {
-                name: nameInput,
-                pool: currentPool
-            };
-
-            document.getElementById('display-player-name').innerText = nameInput;
-            document.getElementById('display-score').innerText = "0";
-
-            showScreen('screen-game');
+            totalTimeMs = 0;
+            showScreen('screen-player-quiz');
             loadQuestion();
-        }
+        };
 
-        function loadQuestion() {
+        const loadQuestion = () => {
             clearInterval(timerInterval);
-            timeLeft = 15;
+            const questions = questionsPool[playerPool];
             
-            const timerEl = document.getElementById('timer');
-            timerEl.innerText = `${timeLeft}s`;
-            timerEl.classList.remove('warning');
-
-            const questions = questionsPool[currentPool];
-            if (currentQuestionIdx >= questions.length) {
-                endGame();
+            if (currentQIdx >= questions.length) {
+                finishQuiz();
                 return;
             }
 
-            document.getElementById('display-progress').innerText = `${currentQuestionIdx + 1} / ${questions.length}`;
+            document.getElementById('display-progress').innerText = `${currentQIdx + 1}/10`;
+            const qData = questions[currentQIdx];
+            document.getElementById('question-text').innerText = qData.q;
             
-            const currentQuestion = questions[currentQuestionIdx];
-            document.getElementById('question-text').innerText = currentQuestion.q;
-
-            const optionsContainer = document.getElementById('options-container');
-            optionsContainer.innerHTML = "";
-
-            currentQuestion.options.forEach((option, index) => {
-                const button = document.createElement('button');
-                button.className = "btn option-btn";
-                button.innerText = option;
-                button.onclick = () => handleAnswer(index);
-                optionsContainer.appendChild(button);
+            const optsContainer = document.getElementById('options-container');
+            optsContainer.innerHTML = '';
+            
+            qData.options.forEach((opt, idx) => {
+                const btn = document.createElement('button');
+                btn.className = 'btn option-btn';
+                btn.innerText = opt;
+                btn.onclick = () => handleAnswer(idx);
+                optsContainer.appendChild(btn);
             });
 
-            // Iniciar cuenta regresiva
+            // Lógica de Tiempos
+            timeLeft = 5;
+            document.getElementById('timer').innerText = `${timeLeft}s`;
+            document.getElementById('timer').classList.remove('warning');
+            
+            qStartTime = Date.now(); // Precisión de milisegundos
+
             timerInterval = setInterval(() => {
                 timeLeft--;
-                timerEl.innerText = `${timeLeft}s`;
-
-                if (timeLeft <= 5) {
-                    timerEl.classList.add('warning');
-                }
-
-                if (timeLeft <= 0) {
+                document.getElementById('timer').innerText = `${timeLeft}s`;
+                if(timeLeft <= 2) document.getElementById('timer').classList.add('warning');
+                
+                if(timeLeft <= 0) {
                     clearInterval(timerInterval);
-                    handleAnswer(-1); // Tiempo agotado = Incorrecto
+                    handleAnswer(-1); // Timeout
                 }
             }, 1000);
-        }
+        };
 
-        function handleAnswer(selectedIndex) {
+        const handleAnswer = (selectedIdx) => {
             clearInterval(timerInterval);
-            const questions = questionsPool[currentPool];
-            const currentQuestion = questions[currentQuestionIdx];
+            const timeTaken = Date.now() - qStartTime; // Calcular MS exactos
+            totalTimeMs += timeTaken;
+
+            const qData = questionsPool[playerPool][currentQIdx];
             const buttons = document.querySelectorAll('.option-btn');
+            buttons.forEach(b => b.disabled = true);
 
-            // Deshabilitar todas las opciones
-            buttons.forEach(btn => btn.disabled = true);
-
-            if (selectedIndex === currentQuestion.correct) {
+            if(selectedIdx === qData.correct) {
                 score += 10;
-                document.getElementById('display-score').innerText = score;
-                if(selectedIndex >= 0) buttons[selectedIndex].classList.add('correct');
+                if(selectedIdx >= 0) buttons[selectedIdx].classList.add('correct');
             } else {
-                if (selectedIndex >= 0) {
-                    buttons[selectedIndex].classList.add('incorrect');
-                }
-                // Mostrar la correcta siempre
-                buttons[currentQuestion.correct].classList.add('correct');
+                if(selectedIdx >= 0) buttons[selectedIdx].classList.add('incorrect');
+                buttons[qData.correct].classList.add('correct');
             }
 
-            // Esperar 1.2 segundos y pasar a la siguiente pregunta de forma fluida
             setTimeout(() => {
-                currentQuestionIdx++;
+                currentQIdx++;
                 loadQuestion();
-            }, 1200);
-        }
+            }, 1000);
+        };
 
-        function endGame() {
-            clearInterval(timerInterval);
+        const finishQuiz = async () => {
+            document.getElementById('my-final-score').innerText = score;
+            showScreen('screen-player-done');
             
-            // Registrar en leaderboard
-            leaderboard.push({
-                name: window.activePlayer.name,
-                pool: window.activePlayer.pool,
-                score: score
+            if(!userId) return;
+            const myDocRef = doc(db, 'artifacts', appId, 'public', 'data', 'players', userId);
+            await updateDoc(myDocRef, {
+                score: score,
+                time: totalTimeMs,
+                finished: true
+            });
+        };
+
+
+        // ==========================================
+        // LÓGICA DEL TRANSMISOR (PANTALLA PRINCIPAL)
+        // ==========================================
+
+        const initHostListeners = async () => {
+            if(!userId) return;
+            // Forzar estado inicial
+            await setDoc(stateDocRef, { status: 'waiting' });
+
+            // Escuchar Jugadores en vivo
+            onSnapshot(playersCollRef, (snap) => {
+                const players = [];
+                let finishedCount = 0;
+                
+                snap.forEach(doc => {
+                    const data = doc.data();
+                    players.push(data);
+                    if(data.finished) finishedCount++;
+                });
+
+                // Actualizar contadores
+                document.getElementById('lobby-count').innerText = players.length;
+                document.getElementById('finished-count').innerText = finishedCount;
+
+                // Si estamos en pantalla de resultados, redibujar Leaderboard
+                if(document.getElementById('screen-host-results').classList.contains('active')) {
+                    renderLeaderboard(players);
+                }
+            }, (error) => console.error("Error listening players:", error));
+        };
+
+        window.hostStartGame = async () => {
+            if(!userId) return;
+            await setDoc(stateDocRef, { status: 'playing' });
+            showScreen('screen-host-playing');
+        };
+
+        window.hostEndGame = async () => {
+            if(!userId) return;
+            await setDoc(stateDocRef, { status: 'finished' });
+            showScreen('screen-host-results');
+            
+            // Obtener datos finales para ordenar
+            const snap = await getDocs(playersCollRef);
+            const players = [];
+            snap.forEach(d => players.push(d.data()));
+            renderLeaderboard(players);
+        };
+
+        const renderLeaderboard = (players) => {
+            // Filtrar solo los que terminaron
+            const finished = players.filter(p => p.finished);
+            
+            // ORDENAMIENTO: Mayor puntaje primero. Si hay empate, Menor tiempo primero.
+            finished.sort((a, b) => {
+                if (b.score !== a.score) {
+                    return b.score - a.score;
+                }
+                return a.time - b.time; // Desempate en milisegundos
             });
 
-            // Marcar pool como completado en el DOM
-            document.getElementById(`btn-p${window.activePlayer.pool}`).disabled = true;
+            const lbContainer = document.getElementById('leaderboard');
+            lbContainer.innerHTML = '';
 
-            document.getElementById('result-player-name').innerText = window.activePlayer.name;
-            document.getElementById('result-score').innerText = `${score} pts`;
-
-            showScreen('screen-result');
-        }
-
-        function updateMenuState() {
-            if (leaderboard.length > 0) {
-                document.getElementById('podium-section').style.display = 'block';
-                const listEl = document.getElementById('podium-list');
-                listEl.innerHTML = "";
-                
-                // Ordenar de mayor a menor puntuación
-                const sorted = [...leaderboard].sort((a,b) => b.score - a.score);
-                sorted.forEach((player, index) => {
-                    listEl.innerHTML += `
-                        <div class="podium-item">
-                            <span>${index + 1}. ${player.name} (P${player.pool})</span>
-                            <span style="color:#8bc53f;">${player.score} Puntos</span>
-                        </div>
-                    `;
-                });
+            if(finished.length === 0) {
+                lbContainer.innerHTML = '<p style="text-align:center; color:#475569;">Aún no hay resultados.</p>';
+                return;
             }
-        }
-    </script>
-</body>
-</html>
