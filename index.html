@@ -544,3 +544,34 @@
                 lbContainer.innerHTML = '<p style="text-align:center; color:#475569;">Aún no hay resultados.</p>';
                 return;
             }
+
+            finished.forEach((p, idx) => {
+                const item = document.createElement('div');
+                item.className = `lb-item ${idx < 3 ? 'top-' + (idx+1) : ''}`;
+                
+                const timeSecs = (p.time / 1000).toFixed(2); // Convertir ms a segundos
+
+                item.innerHTML = `
+                    <div class="lb-rank">#${idx + 1}</div>
+                    <div class="lb-name">${p.name}</div>
+                    <div class="lb-stats">Tiempo: ${timeSecs}s</div>
+                    <div class="lb-score">${p.score}</div>
+                `;
+                lbContainer.appendChild(item);
+            });
+        };
+
+        // Limpiar toda la base de datos para una ronda nueva
+        window.resetLobby = async () => {
+            if(!userId) return;
+            const snap = await getDocs(playersCollRef);
+            snap.forEach(async (d) => {
+                await deleteDoc(d.ref);
+            });
+            await setDoc(stateDocRef, { status: 'waiting' });
+            showScreen('screen-host-lobby');
+        };
+
+    </script>
+</body>
+</html>
